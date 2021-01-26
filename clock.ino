@@ -1,70 +1,50 @@
 #include <Servo.h>
+//Declaring servos as variables
+Servo myservo[14];
 
-const int NSERVOS = 7;
-const int ON = 90;
-Servo myservo[NSERVOS];
-
-int offset[7] = {0, 0, -20, 0, -10, 0, -10};      //Servo on position values for each servo
-int numbers[10][7] = {{1, 1, 0, 1, 1, 1, 1}, {0, 0, 0, 1, 0, 0, 1}, {1, 0, 1, 1, 1, 1, 0}, {1, 0, 1, 1, 0, 1, 1}, {0, 1, 1, 1, 0, 0, 1}, {1, 1, 1, 0, 0, 1, 1}, {1, 1, 1, 0, 1, 1, 1}, {1, 0, 0, 1, 0, 0, 1}, {1, 1, 1, 1, 1, 1, 1}, {1, 1, 1, 1, 0, 0, 1}};
-
-void on(int i){
-    myservo[i].write(ON + offset[i]);
-}
-
-void off(int i){
-    int mode;
-    if (i == 1 || i == 4 || i == 5) mode = 1;
-    else mode = -1;
-    myservo[i].write(ON + offset[i] + 60*mode);
-}
-
-void onAll(){
-  for (int i = 0; i < 7; ++i)
-    on(i);
-}
-
-void offAll(){
-  for (int i = 0; i < 7; ++i)
-    off(i);
-}
-
-void changeNum(int num){
-  for (int i = 0; i < 7; ++i)
-    if (numbers[num][i]){
-      on(i);
-    }
-    else{
-      off(i);
-    }
-}
+//int segmentOff[7] = {0,180,0,0,180,0,0};      //Servo off position values for each servo
+int segmentOn[7] = {90,90,85,82,86,90,90};  //Servo on position values for each servo
+int digits[10][7] = {
+  {90,90,0,82,86,90,90},        // Number 0
+  {0,180,0,82,180,0,90},        // Number 1
+  {90,180,85,82,86,90,0},       // Number 2
+  {90,180,85,82,180,90,90},     // Number 3
+  {0,90,85,82,180,0,90},        // Number 4
+  {90,90,85,0,180,90,90},       // Number 5
+  {90,90,85,0,86,90,90},        // Number 6
+  {90,180,0,82,180,0,90},       // Number 7
+  {90,90,90,82,86,90,90},       // Number 8
+  {90,90,85,82,180,90,90}       // Number 9
+};
 
 void setup()
 {
   //Assigng pin number for each servo
-  myservo[0].attach(11);
-  myservo[1].attach(10);
-  myservo[2].attach(9);
-  myservo[3].attach(7);
-  myservo[4].attach(6);
-  myservo[5].attach(5);
-  myservo[6].attach(3);
-  Serial.begin(9600);
-  onAll();
-}
- int incomingByte;
-void loop() {
-  if (Serial.available() > 0) {
-    // read the incoming byte:
-    incomingByte = Serial.parseInt();
-    changeNum(incomingByte);
-   Serial.read(); 
-  }
-  /*
-  onAll();
-  delay(2000);
-  offAll();
-  delay(2000);
-  */
+  myservo[0].attach(11);  //045
+  myservo[1].attach(10);  //1
+  myservo[2].attach(9);   //2
+  
+  myservo[3].attach(7);   //3610
+  myservo[4].attach(6);   //4
+  myservo[5].attach(5);   //5
+  myservo[6].attach(3);   //60
 
-//  This is just some random bullshit
+ for(int i = 0; i < 7;i++)
+ {
+    myservo[i].write(segmentOn[i]);
+    
+ }
+ delay(3000);
+}
+
+void loop()
+{
+  for(int i = 9; i >= 0;i--)
+  {
+    for(int j = 0; j < 7; j++)
+    {
+      myservo[j].write(digits[i][j]);
+    }
+    delay(2000);
+  }
 }
